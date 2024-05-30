@@ -50,13 +50,12 @@ router.get("/:id", async (req, res, next) => {
 router.post('/', async (req, res, next) => {
     try {
 
-        const { productName, price, stock, order } = req.body
+        const { productName, price, stock } = req.body
     
         const newProduct = new productModel({
             productName,
             price,
-            stock,
-            order
+            stock
         })
     
         const product = await newProduct.save();
@@ -76,5 +75,51 @@ router.post('/', async (req, res, next) => {
     }
 })
 
+router.put('/:id', async (req, res, next) => {
+    try {
+        let id = req.params.id
+        const { productName, price, stock } = req.body
+
+        let product_update = await productModel.findByIdAndUpdate(
+            id,
+            { productName, price, stock },
+            { new: true }
+        )
+
+        return res.status(200).send({
+            success: true,
+            message: "update success!",
+            data: product_update
+        })
+
+    } catch (error) {
+        return res.status(500).send({
+            success: false,
+            status: 500,
+            message: (error.toString(error))
+        })
+    }
+})
+
+router.delete('/:id', async (req, res, next) => {
+    try {
+
+        let id = req.params.id
+        let delete_product = await productModel.findByIdAndDelete(id)
+
+        return res.status(200).send({
+            success: true,
+            status: "200",
+            data: delete_product
+        })
+        
+    } catch (error) {
+        return res.status(500).send({
+            success: false,
+            status: 500,
+            message: (error.toString(error))
+        })
+    }
+})
 
 module.exports = router
