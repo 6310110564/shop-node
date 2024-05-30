@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 
-const productModel = require('../models/product.model')
+const productModel = require('../models/product.model');
+const cartModel = require('../models/cart.model');
 
 //get all products
 router.get('/', async (req, res, next) => {
@@ -113,6 +114,56 @@ router.delete('/:id', async (req, res, next) => {
             data: delete_product
         })
         
+    } catch (error) {
+        return res.status(500).send({
+            success: false,
+            status: 500,
+            message: (error.toString(error))
+        })
+    }
+})
+
+//GET Carts
+// router.get('/:id/carts', async(req, res, next) => {
+//     try {
+//         const products_id = req.params.id;
+
+//         const order
+//     } catch (error) {
+        
+//     }
+// })
+
+//POST Cart
+router.post('/:id/carts', async (req, res, next) => {
+    try {
+        const product_id = req.params.id
+        const { user_id, amount } = req.body
+
+        // const product = await productModel.findById(product_id)
+
+        // if(amount > product.stock) {
+        //     return res.status(400).send({
+        //         success: false,
+        //         status: "400",
+        //         message: "ไม่สามารถเพิ่ม order ได้ เนื่องจากจำนวน stock ไม่เพียงพอ"
+        //     })
+        // }
+
+        const newCart = new cartModel({
+            product_data: product_id,
+            user_data: user_id,
+            amount
+        })
+
+        const cart = await newCart.save()
+
+        return res.status(200).send({
+            success: true,
+            message: "add cart success!",
+            data: cart
+        })
+
     } catch (error) {
         return res.status(500).send({
             success: false,
